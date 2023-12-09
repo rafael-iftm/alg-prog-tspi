@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo dos Requisitos Mínimos do Trabalho</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Resumo dos Requisitos Mínimos do Trabalho</h1>
+
+<h2>Classes:</h2>
+<ul>
+    <li>Criar no mínimo 3 classes: uma classe principal (Programa) e duas outras classes, sendo que uma fará agregação por composição na outra.</li>
+    <li>Implementar no mínimo 3 atributos para a classe principal e 2 para a classe secundária, sendo um deles um HashMap.</li>
+    <li>Utilizar ArrayList para implementar a composição, ou seja, a classe principal terá uma lista contendo objetos da classe secundária.</li>
+    <li>Implementar construtores, métodos getters e setters, e outros métodos necessários.</li>
+</ul>
+
+<h2>Classe Programa:</h2>
+<pre>
+<code>
+public class Programa {
+    private static Consulta consulta = new Consulta();
+    private static ArrayList&lt;Remedio&gt; remediosCadastrados = new ArrayList&lt;&gt;();
+    private static HashMap&lt;String, String&gt; unidades = new HashMap&lt;&gt;();
+}
+</code>
+</pre>
+
+<h2>Menu:</h2>
+<ul>
+    <li>Apresentar um menu na classe Programa com pelo menos 10 opções de funções para o usuário.</li>
+    <li>O menu deve permitir manipular o objeto da classe principal, objetos da classe secundária e o dicionário implementado pelo HashMap.</li>
+</ul>
+
+<h2>Implementação de Operações:</h2>
+<ul>
+    <li>Implementar métodos estáticos na classe Programa para cada opção do menu (mínimo de 10 operações).</li>
+    <li>Exemplos de operações: cadastrar, editar, apagar, consultar, listar elementos, etc.</li>
+</ul>
+
+<h2>Validações:</h2>
+<ul>
+    <li>Fazer validações dos dados de entrada, criando regras próprias para garantir a integridade dos dados.</li>
+</ul>
+</body>
+</html>

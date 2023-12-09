@@ -1,426 +1,336 @@
 package trabalho_disciplina;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Programa {
-    private static Consulta consulta = new Consulta("01/01/2023", "Paciente X");
-    private static ArrayList<Remedio> remediosCadastrados = new ArrayList<>();
-    private static HashMap<String, String> tiposUnidade = new HashMap<>();
-    private static final String ARQUIVO_CONSULTA = "consulta.txt";
-    private static final String ARQUIVO_REMEDIOS = "remedios.txt";
-    private static final String ARQUIVO_TIPOS_UNIDADE = "tiposUnidade.txt";
+    private static ArrayList<Pessoa> pessoas = new ArrayList<>();
+    private static HashMap<String, Pessoa> mapaPessoas = new HashMap<>();
+    private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        carregarDadosDosArquivos(); // Carregar dados ao iniciar o programa
         geraMenu();
-        salvarDadosEmArquivos(); // Salvar dados ao sair do programa
     }
 
     public static void geraMenu() {
-        Scanner scanner = new Scanner(System.in);
-
         int opcao;
         do {
             System.out.println("Menu:");
-            System.out.println("1. Cadastrar nova consulta");
-            System.out.println("2. Editar dados da consulta");
-            System.out.println("3. Apagar consulta atual");
-            System.out.println("4. Inserir Remédio na consulta");
-            System.out.println("5. Apresentar os dados da Consulta");
-            System.out.println("6. Listar os dados dos remédios presentes nessa consulta");
-            System.out.println("7. Cadastrar um novo Remédio");
-            System.out.println("8. Editar um Remédio");
-            System.out.println("9. Listar os remédios cadastrados");
-            System.out.println("10. Criar um novo tipo de unidade");
-            System.out.println("11. Listar os tipos de unidades já cadastradas");
-            System.out.println("12. Apagar os dados");
-            System.out.println("13. Carregar os dados dos arquivos");
-            System.out.println("14. Sair");
+            System.out.println("1. Cadastrar nova pessoa");
+            System.out.println("2. Editar dados da pessoa");
+            System.out.println("3. Apagar pessoa");
+            System.out.println("4. Consultar pessoa");
+            System.out.println("5. Listar todas as pessoas");
+            System.out.println("6. Criar novo tipo de endereço");
+            System.out.println("7. Listar tipos de endereço");
+            System.out.println("8. Consultar endereço de uma pessoa");
+            System.out.println("9. Listar todas as pessoas com seus endereços");
+            System.out.println("10. Sair");
+            System.out.print("Escolha uma opção: ");
+            opcao = scanner.nextInt();
 
-            try {
-                System.out.print("Escolha uma opção: ");
-                opcao = scanner.nextInt();
-                
-                // Limpa o buffer do scanner
-                scanner.nextLine();
-        
-                if (opcao >= 1 && opcao <= 14) {
-                    switch (opcao) {
-                        case 1:
-                            cadastrarNovaConsulta();
-                            break;
-                        case 2:
-                            editarDadosConsulta();
-                            break;
-                        case 3:
-                            apagarConsultaAtual();
-                            break;
-                        case 4:
-                            inserirRemedioNaConsulta();
-                            break;
-                        case 5:
-                            apresentarDadosConsulta();
-                            break;
-                        case 6:
-                            listarRemediosNaConsulta();
-                            break;
-                        case 7:
-                            cadastrarNovoRemedio();
-                            break;
-                        case 8:
-                            editarRemedio();
-                            break;
-                        case 9:
-                            listarRemediosCadastrados();
-                            break;
-                        case 10:
-                            criarNovoTipoUnidade();
-                            break;
-                        case 11:
-                            listarTiposUnidadesCadastradas();
-                            break;
-                        case 12:
-                            apagarDados();
-                            break;
-                        case 13:
-                            carregarDadosDosArquivos();
-                            break;
-                        case 14:
-                            System.out.println("Saindo do programa. Até logo!");
-                            break;
-                    }
-                } else {
+            switch (opcao) {
+                case 1:
+                    cadastrarPessoa();
+                    break;
+                case 2:
+                    editarPessoa();
+                    break;
+                case 3:
+                    apagarPessoa();
+                    break;
+                case 4:
+                    consultarPessoa();
+                    break;
+                case 5:
+                    listarPessoas();
+                    break;
+                case 6:
+                    criarTipoEndereco();
+                    break;
+                case 7:
+                    listarTiposEndereco();
+                    break;
+                case 8:
+                    consultarEnderecoPessoa();
+                    break;
+                case 9:
+                    listarPessoasComEnderecos();
+                    break;
+                case 10:
+                    System.out.println("Saindo do programa. Até mais!");
+                    fecharScanner();
+                    break;
+                default:
                     System.out.println("Opção inválida. Tente novamente.");
+            }
+        } while (opcao != 10);
+    }
+
+    public static void cadastrarPessoa() {
+        Scanner scanner = new Scanner(System.in);
+    
+        System.out.println("Cadastrar Nova Pessoa:");
+    
+        // Solicitar informações da pessoa
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine().trim(); // Remover espaços em branco extras
+        while (nome.isEmpty()) {
+            System.out.print("Nome não pode ser vazio. Digite novamente: ");
+            nome = scanner.nextLine().trim();
+        }
+    
+        System.out.print("Idade: ");
+        int idade = -1;
+        while (idade <= 0) {
+            try {
+                idade = Integer.parseInt(scanner.nextLine());
+                if (idade <= 0) {
+                    System.out.print("Idade deve ser um número positivo. Digite novamente: ");
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("Opção inválida. Insira um número.");
-                // Limpa o buffer do scanner em caso de erro
-                scanner.nextLine();
-                opcao = -1; // Define uma opção inválida para continuar o loop
-            } catch (Exception e) { 
-                System.out.println("Ocorreu um erro inesperado. Saindo do programa.");
-                opcao = 14; // Sair do loop em caso de erro inesperado
+            } catch (NumberFormatException e) {
+                System.out.print("Idade inválida. Digite novamente: ");
             }
-        } while (opcao != 14);
-
-        // Fechar o scanner
-        scanner.close();
-    }
-
-    public static void cadastrarNovaConsulta() {
+        }
+    
+        // Solicitar informações do endereço
+        System.out.print("Rua: ");
+        String rua = scanner.nextLine();
+    
+        System.out.print("Cidade: ");
+        String cidade = scanner.nextLine();
+    
+        System.out.print("Estado: ");
+        String estado = scanner.nextLine();
+    
+        // Criar objeto Endereco com as informações fornecidas
+        Endereco endereco = new Endereco(rua, cidade, estado);
+    
+        // Criar objeto Pessoa com as informações fornecidas
+        Pessoa novaPessoa = new Pessoa(nome, idade, endereco);
+    
+        // Adicionar pessoa à lista e ao mapa
+        pessoas.add(novaPessoa);
+        mapaPessoas.put(nome, novaPessoa);
+    
+        System.out.println("Pessoa cadastrada com sucesso!\n");
+    }    
+    
+    public static void editarPessoa() {
         Scanner scanner = new Scanner(System.in);
     
-        do {
-            System.out.println("Cadastrar Nova Consulta:");
+        System.out.println("Editar Dados da Pessoa:");
     
-            // Solicita informações ao usuário
-            System.out.print("Data da consulta (DD/MM/AAAA): ");
-            String dataConsulta = scanner.next();
+        // Solicitar o nome da pessoa a ser editada
+        System.out.print("Digite o nome da pessoa a ser editada: ");
+        String nomeEditar = scanner.nextLine().trim();
     
-            // Valida a data
-            if (validarFormatoData(dataConsulta)) {
-                // Continua o restante do código
-                consulta.setData(dataConsulta);
+        // Verificar se a pessoa existe no mapa
+        if (mapaPessoas.containsKey(nomeEditar)) {
+            // Obter a pessoa a ser editada
+            Pessoa pessoaEditar = mapaPessoas.get(nomeEditar);
     
-                System.out.print("Nome do paciente: ");
-                String nomePaciente = scanner.next();
-                consulta.setPaciente(nomePaciente);
+            // Solicitar novas informações
+            System.out.print("Novo nome: ");
+            String novoNome = scanner.nextLine().trim();
+            while (novoNome.isEmpty()) {
+                System.out.print("Nome não pode ser vazio. Digite novamente: ");
+                novoNome = scanner.nextLine().trim();
+            }
+            pessoaEditar.setNome(novoNome);
     
-                System.out.println("Consulta cadastrada com sucesso!");
+            System.out.print("Nova idade: ");
+            int novaIdade = -1;
+            while (novaIdade <= 0) {
+                try {
+                    novaIdade = Integer.parseInt(scanner.nextLine());
+                    if (novaIdade <= 0) {
+                        System.out.print("Idade deve ser um número positivo. Digite novamente: ");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.print("Idade inválida. Digite novamente: ");
+                }
+            }
+            pessoaEditar.setIdade(novaIdade);
+    
+            System.out.println("Dados da pessoa editados com sucesso!\n");
+        } else {
+            System.out.println("Pessoa não encontrada.\n");
+        }
+    }    
+    
+    public static void apagarPessoa() {
+        Scanner scanner = new Scanner(System.in);
+    
+        System.out.println("Apagar Pessoa:");
+    
+        // Solicitar o nome da pessoa a ser apagada
+        System.out.print("Digite o nome da pessoa a ser apagada: ");
+        String nomeApagar = scanner.nextLine().trim();
+    
+        // Verificar se o nome é válido
+        while (nomeApagar.isEmpty()) {
+            System.out.print("Nome não pode ser vazio. Digite novamente: ");
+            nomeApagar = scanner.nextLine().trim();
+        }
+    
+        // Verificar se a pessoa existe no mapa
+        if (mapaPessoas.containsKey(nomeApagar)) {
+            // Remover pessoa da lista e do mapa
+            Pessoa pessoaApagar = mapaPessoas.get(nomeApagar);
+            pessoas.remove(pessoaApagar);
+            mapaPessoas.remove(nomeApagar);
+    
+            System.out.println("Pessoa apagada com sucesso!\n");
+        } else {
+            System.out.println("Pessoa não encontrada.\n");
+        }
+    }
+     
+    public static void consultarPessoa() {
+        Scanner scanner = new Scanner(System.in);
+    
+        System.out.println("Consultar Pessoa:");
+    
+        // Solicitar o nome da pessoa a ser consultada
+        System.out.print("Digite o nome da pessoa a ser consultada: ");
+        String nomeConsultar = scanner.nextLine().trim();
+    
+        // Verificar se o nome é válido
+        while (nomeConsultar.isEmpty()) {
+            System.out.print("Nome não pode ser vazio. Digite novamente: ");
+            nomeConsultar = scanner.nextLine().trim();
+        }
+    
+        // Verificar se a pessoa existe no mapa
+        if (mapaPessoas.containsKey(nomeConsultar)) {
+            // Obter e exibir informações da pessoa
+            Pessoa pessoaConsultar = mapaPessoas.get(nomeConsultar);
+            System.out.println("Nome: " + pessoaConsultar.getNome());
+            System.out.println("Idade: " + pessoaConsultar.getIdade());
+            System.out.println("Endereço: " + pessoaConsultar.getEndereco().getRua() + ", " +
+                    pessoaConsultar.getEndereco().getCidade() + ", " +
+                    pessoaConsultar.getEndereco().getEstado() + "\n");
+        } else {
+            System.out.println("Pessoa não encontrada.\n");
+        }
+    }
+    
+    public static void listarPessoas() {
+        System.out.println("Listar Todas as Pessoas:");
+    
+        if (pessoas.isEmpty()) {
+            System.out.println("Nenhuma pessoa cadastrada.\n");
+        } else {
+            for (Pessoa pessoa : pessoas) {
+                System.out.println("Nome: " + pessoa.getNome());
+                System.out.println("Idade: " + pessoa.getIdade());
+                
+                // Verificar se o endereço é nulo antes de acessar seus atributos
+                if (pessoa.getEndereco() != null) {
+                    System.out.println("Endereço: " + pessoa.getEndereco().getRua() + ", " +
+                            pessoa.getEndereco().getCidade() + ", " +
+                            pessoa.getEndereco().getEstado() + "\n");
+                } else {
+                    System.out.println("Endereço não disponível.\n");
+                }
+            }
+        }
+    }    
+
+    public static void criarTipoEndereco() {
+        Scanner scanner = new Scanner(System.in);
+    
+        System.out.println("Criar Novo Tipo de Endereço:");
+    
+        // Solicitar informações do novo tipo de endereço
+        System.out.print("Nome do novo tipo de endereço: ");
+        String novoTipoEndereco = scanner.nextLine().trim();
+    
+        // Verificar se o nome do tipo de endereço é válido
+        while (novoTipoEndereco.isEmpty()) {
+            System.out.print("Nome do tipo de endereço não pode ser vazio. Digite novamente: ");
+            novoTipoEndereco = scanner.nextLine().trim();
+        }
+    
+        // Adicionar o novo tipo de endereço ao HashMap
+        EnderecoTipo.adicionarTipoEndereco(novoTipoEndereco);
+    
+        System.out.println("Novo tipo de endereço criado com sucesso!\n");
+    }    
+    
+    public static void listarTiposEndereco() {
+        System.out.println("Listar Tipos de Endereço:");
+    
+        ArrayList<String> tiposEndereco = EnderecoTipo.getTiposEndereco();
+    
+        if (tiposEndereco.isEmpty()) {
+            System.out.println("Nenhum tipo de endereço cadastrado.\n");
+        } else {
+            for (String tipo : tiposEndereco) {
+                System.out.println(tipo);
+            }
+            System.out.println();
+        }
+    }
+    
+    public static void consultarEnderecoPessoa() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Consultar Endereço de uma Pessoa:");
+
+        // Solicitar o nome da pessoa para consultar o endereço
+        System.out.print("Digite o nome da pessoa: ");
+        String nomeConsultar = scanner.nextLine().trim();
+
+        // Verificar se o nome é válido
+        while (nomeConsultar.isEmpty()) {
+            System.out.print("Nome não pode ser vazio. Digite novamente: ");
+            nomeConsultar = scanner.nextLine().trim();
+        }
+
+        // Verificar se a pessoa existe no mapa
+        if (mapaPessoas.containsKey(nomeConsultar)) {
+            // Obter e exibir informações do endereço da pessoa
+            Pessoa pessoaConsultar = mapaPessoas.get(nomeConsultar);
+            if (pessoaConsultar.getEndereco() != null) {
+                System.out.println("Endereço de " + pessoaConsultar.getNome() + ":");
+                System.out.println("Rua: " + pessoaConsultar.getEndereco().getRua());
+                System.out.println("Cidade: " + pessoaConsultar.getEndereco().getCidade());
+                System.out.println("Estado: " + pessoaConsultar.getEndereco().getEstado() + "\n");
             } else {
-                System.out.println("Formato de data inválido. Tente novamente.");
+                System.out.println("Endereço não disponível.\n");
             }
-    
-            // Pergunta se o usuário deseja cadastrar outra consulta
-            System.out.print("Deseja cadastrar outra consulta? (S/N): ");
-        } while (scanner.next().equalsIgnoreCase("S"));
-    
-        scanner.close();
-    }
-
-    public static void editarDadosConsulta() {
-        Scanner scanner = new Scanner(System.in);
-
-        // Solicita as informações atualizadas ao usuário
-        System.out.print("Nova data da consulta (DD/MM/AAAA): ");
-        String novaDataConsulta = scanner.next();
-        if (validarFormatoData(novaDataConsulta)) {
-            consulta.setData(novaDataConsulta);
         } else {
-            System.out.println("Formato de data inválido. Os dados não foram modificados.");
-        }
-
-        System.out.print("Novo nome do paciente: ");
-        String novoNomePaciente = scanner.next();
-        consulta.setPaciente(novoNomePaciente);
-
-        System.out.println("Consulta editada com sucesso!");
-        scanner.close();
-    }
-
-    public static void apagarConsultaAtual() {
-        // Implemente a lógica para apagar a consulta atual
-        // Por exemplo, você pode reinicializar a consulta com dados padrão
-        consulta = new Consulta("01/01/2023", "Paciente X");
-        
-        System.out.println("Consulta apagada com sucesso!");
-    }
-
-    public static void inserirRemedioNaConsulta() {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.println("Inserir Remédio na Consulta:");
-        
-        // Mostra os dados atuais da consulta
-        apresentarDadosConsulta();
-        
-        // Solicita informações sobre o remédio ao usuário
-        System.out.print("Nome do remédio: ");
-        String nomeRemedio = scanner.next();
-        
-        System.out.print("Tipo do remédio: ");
-        String tipoRemedio = scanner.next();
-        
-        // Cria um novo remédio e insere na consulta
-        Remedio novoRemedio = new Remedio(nomeRemedio, tipoRemedio);
-        consulta.getRemedios().add(novoRemedio);
-        
-        System.out.println("Remédio inserido na consulta com sucesso!");
-
-        scanner.close();
-    }
-    
-    public static void apresentarDadosConsulta() {
-        System.out.println("Apresentar os dados da Consulta:");
-        
-        // Mostra os dados atuais da consulta
-        System.out.println("Data: " + consulta.getData());
-        System.out.println("Paciente: " + consulta.getPaciente());
-    }
-    
-    public static void listarRemediosNaConsulta() {
-        System.out.println("Listar os dados dos remédios presentes nessa consulta:");
-        
-        // Mostra os remédios presentes na consulta
-        for (Remedio remedio : consulta.getRemedios()) {
-            System.out.println("Nome: " + remedio.getNome() + ", Tipo: " + remedio.getTipo());
+            System.out.println("Pessoa não encontrada.\n");
         }
     }
+
+    public static void listarPessoasComEnderecos() {
+        System.out.println("Listar Todas as Pessoas com Seus Endereços:");
     
-    public static void cadastrarNovoRemedio() {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.println("Cadastrar Novo Remédio:");
-        
-        // Solicita informações ao usuário
-        System.out.print("Nome do remédio: ");
-        String nomeRemedio = scanner.next();
-        
-        System.out.print("Tipo do remédio: ");
-        String tipoRemedio = scanner.next();
-        
-        // Cria um novo remédio e adiciona à lista de remédios cadastrados
-        Remedio novoRemedio = new Remedio(nomeRemedio, tipoRemedio);
-        remediosCadastrados.add(novoRemedio);
-        
-        System.out.println("Remédio cadastrado com sucesso!");
-        scanner.close();
-    }
-    
-    public static void editarRemedio() {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.println("Editar um Remédio:");
-        
-        // Mostra os remédios cadastrados
-        System.out.println("Remédios cadastrados:");
-        for (Remedio remedio : remediosCadastrados) {
-            System.out.println("Nome: " + remedio.getNome() + ", Tipo: " + remedio.getTipo());
-        }
-        
-        // Solicita o nome do remédio a ser editado
-        System.out.print("Digite o nome do remédio a ser editado: ");
-        String nomeRemedio = scanner.next();
-        
-        // Busca o remédio pelo nome na lista de remédios cadastrados
-        Remedio remedioParaEditar = null;
-        for (Remedio remedio : remediosCadastrados) {
-            if (remedio.getNome().equals(nomeRemedio)) {
-                remedioParaEditar = remedio;
-                break;
-            }
-        }
-        
-        if (remedioParaEditar != null) {
-            // Solicita as informações atualizadas ao usuário
-            System.out.print("Novo nome do remédio: ");
-            String novoNomeRemedio = scanner.next();
-            remedioParaEditar.setNome(novoNomeRemedio);
-        
-            System.out.print("Novo tipo do remédio: ");
-            String novoTipoRemedio = scanner.next();
-            remedioParaEditar.setTipo(novoTipoRemedio);
-        
-            System.out.println("Remédio editado com sucesso!");
+        if (pessoas.isEmpty()) {
+            System.out.println("Nenhuma pessoa cadastrada.\n");
         } else {
-            System.out.println("Remédio não encontrado. Tente novamente.");
+            for (Pessoa pessoa : pessoas) {
+                System.out.println("Nome: " + pessoa.getNome());
+                System.out.println("Idade: " + pessoa.getIdade());
+                
+                // Verificar se o endereço é nulo antes de acessar seus atributos
+                if (pessoa.getEndereco() != null) {
+                    System.out.println("Endereço: ");
+                    System.out.println("  Rua: " + pessoa.getEndereco().getRua());
+                    System.out.println("  Cidade: " + pessoa.getEndereco().getCidade());
+                    System.out.println("  Estado: " + pessoa.getEndereco().getEstado() + "\n");
+                } else {
+                    System.out.println("Endereço não disponível.\n");
+                }
+            }
         }
+    }
 
+    public static void fecharScanner() {
         scanner.close();
-    }
-    
-    public static void listarRemediosCadastrados() {
-        System.out.println("Listar os remédios cadastrados:");
-        
-        // Mostra os remédios cadastrados
-        for (Remedio remedio : remediosCadastrados) {
-            System.out.println("Nome: " + remedio.getNome() + ", Tipo: " + remedio.getTipo());
-        }
-    }
-
-    public static void criarNovoTipoUnidade() {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.println("Criar um novo tipo de unidade:");
-        
-        // Solicita informações ao usuário
-        System.out.print("Chave do novo tipo de unidade: ");
-        String chave = scanner.next();
-        
-        System.out.print("Valor do novo tipo de unidade: ");
-        String valor = scanner.next();
-        
-        // Adiciona ao HashMap de tipos de unidade
-        tiposUnidade.put(chave, valor);
-        
-        System.out.println("Novo tipo de unidade criado com sucesso!");
-
-        scanner.close();
-    }
-
-    public static void listarTiposUnidadesCadastradas() {
-        System.out.println("Tipos de unidades cadastradas:");
-        for (String chave : tiposUnidade.keySet()) {
-            System.out.println("Chave: " + chave + ", Valor: " + tiposUnidade.get(chave));
-        }
-    }
-
-    public static void apagarDados() {
-        consulta = new Consulta("01/01/2023", "Paciente X");
-        remediosCadastrados.clear();
-        tiposUnidade.clear();
-        System.out.println("Dados apagados com sucesso!");
-    }
-
-    public static void carregarDadosDosArquivos() {
-        carregarDadosArquivoConsulta();
-        carregarDadosArquivoRemedios();
-        carregarDadosArquivoTiposUnidade();
-    }
-    
-    public static void salvarDadosEmArquivos() {
-        salvarDadosArquivoConsulta();
-        salvarDadosArquivoRemedios();
-        salvarDadosArquivoTiposUnidade();
-    }
-
-    private static void carregarDadosArquivoConsulta() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO_CONSULTA))) {
-            String data = reader.readLine();
-            String paciente = reader.readLine();
-            consulta = new Consulta(data, paciente);
-        } catch (IOException e) {
-            System.out.println("Erro ao carregar dados da consulta do arquivo.");
-        }
-    }
-
-    private static void salvarDadosArquivoConsulta() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO_CONSULTA))) {
-            writer.write(consulta.getData());
-            writer.newLine();
-            writer.write(consulta.getPaciente());
-        } catch (IOException e) {
-            System.out.println("Erro ao salvar dados da consulta no arquivo.");
-        }
-    }
-
-    private static void carregarDadosArquivoRemedios() {
-        remediosCadastrados.clear(); // Limpa a lista antes de carregar
-        try (BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO_REMEDIOS))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                String[] partes = linha.split(",");
-                Remedio remedio = new Remedio(partes[0], partes[1]);
-                remediosCadastrados.add(remedio);
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao carregar dados dos remédios do arquivo.");
-        }
-    }
-
-    private static void salvarDadosArquivoRemedios() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO_REMEDIOS))) {
-            for (Remedio remedio : remediosCadastrados) {
-                writer.write(remedio.getNome() + "," + remedio.getTipo());
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao salvar dados dos remédios no arquivo.");
-        }
-    }
-
-    private static void carregarDadosArquivoTiposUnidade() {
-        tiposUnidade.clear(); // Limpa o HashMap antes de carregar
-        try (BufferedReader reader = new BufferedReader(new FileReader(ARQUIVO_TIPOS_UNIDADE))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                String[] partes = linha.split(",");
-                tiposUnidade.put(partes[0], partes[1]);
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao carregar dados dos tipos de unidade do arquivo.");
-        }
-    }
-
-    private static void salvarDadosArquivoTiposUnidade() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO_TIPOS_UNIDADE))) {
-            for (String chave : tiposUnidade.keySet()) {
-                writer.write(chave + "," + tiposUnidade.get(chave));
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao salvar dados dos tipos de unidade no arquivo.");
-        }
-    }
-
-    private static boolean validarFormatoData(String data) {
-        if (data == null || data.isEmpty()) {
-            System.out.println("Data não pode ser nula ou vazia.");
-            return false;
-        }
-
-        // Padrão de data desejado (DD/MM/AAAA)
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        dateFormat.setLenient(false);
-
-        try {
-            // Tenta fazer o parsing da data
-            dateFormat.parse(data);
-            return true;
-        } catch (ParseException e) {
-            System.out.println("Formato de data inválido. Use o formato DD/MM/AAAA.");
-            return false;
-        }
     }
 }
