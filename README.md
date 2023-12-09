@@ -2,6 +2,12 @@
 
 Este projeto em Java foi desenvolvido para gerenciar informações relacionadas a consultas médicas e endereços de pessoas. O sistema é composto por três classes principais: `Pessoa`, `Endereco`, e `Programa`.
 
+## Participantes
+
+- **Rafael Andrade Prado**
+- **João Vitor Quintanilha**
+- **Lucas José Arantes**
+
 ## Estrutura do Projeto
 
 ### Classes
